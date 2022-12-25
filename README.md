@@ -1,5 +1,9 @@
 # swat
 
+<p align="center">
+    <img src="Assets/Images/logo.png"/>
+</p>
+
 **Sw**eet **at**tributes - a compact app for parsing files which specify several system setups in a convenient format and transforming them into a set of separate config files.  
 The app is an implementation of idea from [cuco](https://github.com/zeionara/cuco) python package using swift programming language.
 
