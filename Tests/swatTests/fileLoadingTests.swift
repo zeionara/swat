@@ -16,7 +16,7 @@ final class FileLoadingTests: XCTestCase {
     }
 
     func testFileReferenceHandling() throws {
-        let content = try! read(from: "foo.yml", in: Path.testAssets.appendingPathComponent("multipleFiles"))
+        let content = try! read(from: "foo.yml", in: Path.testAssets.appendingPathComponent("MultipleFiles"))
 
         XCTAssert(
             NSDictionary(
@@ -31,7 +31,7 @@ final class FileLoadingTests: XCTestCase {
         let content = try! read(
             """
             foo: 
-                bar: multipleFiles/baz.yml
+                bar: MultipleFiles/baz.yml
             """,
             in: Path.testAssets
         )
@@ -46,7 +46,7 @@ final class FileLoadingTests: XCTestCase {
     }
 
     func testSingleFolderLink() throws {
-        let content = try! read(from: "foo.yml", in: Path.testAssets.appendingPathComponent("singleFolder"))
+        let content = try! read(from: "foo.yml", in: Path.testAssets.appendingPathComponent("SingleFolder"))
 
         XCTAssert(
             NSDictionary(
