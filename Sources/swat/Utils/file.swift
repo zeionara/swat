@@ -1,41 +1,6 @@
 import Foundation
 import Yams
 
-struct Path {
-    static let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-    static let assets = Path.root.appendingPathComponent("Assets")
-    static let testAssets = Path.assets.appendingPathComponent("Test")
-
-    static let yamlRegex = try! NSRegularExpression(pattern: ".+\\.ya?ml$")
-    static let folderRegex = try! NSRegularExpression(pattern: "@(?<path>.+)")
-
-    static func isYaml(_ path: String) -> Bool {
-        let range = NSRange(location: 0, length: path.count)
-        return Path.yamlRegex.firstMatch(in: path, options: [], range: range) != nil
-    }
-
-    static func getFolderPath(_ path: String) -> String? {
-        let range = NSRange(location: 0, length: path.count)
-
-        if let match = Path.folderRegex.firstMatch(in: path, range: range) {
-            let pathRange = match.range(withName: "path")
-
-            if let range = Range(pathRange, in: path) {
-                return String(path[range])
-            }
-        }
-
-        return nil
-    }
-}
-
-extension URL {
-    var isDirectory: Bool {
-        var isDirectory: ObjCBool = false
-        return FileManager.default.fileExists(atPath: self.path, isDirectory: &isDirectory) && isDirectory.boolValue
-    }
-}
-
 private func handleValue(_ value: Any, in directory: URL) throws -> Any {
     if let stringifiedValue = value as? String {
         if Path.isYaml(stringifiedValue) {
