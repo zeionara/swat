@@ -1,5 +1,7 @@
 # swat
 
+[![test](https://github.com/zeionara/swat/actions/workflows/test.yml/badge.svg)](https://github.com/zeionara/swat/actions/workflows/test.yml)
+
 <p align="center">
     <img src="Assets/Images/logo.png"/>
 </p>
