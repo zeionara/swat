@@ -62,4 +62,22 @@ final class FileLoadingTests: XCTestCase {
             ), "Expected and loaded dictionaries are not the same"
         )
     }
+
+    func testFolderTreeLink() throws {
+        let content = try! read(from: "foo.yml", in: Path.testAssets.appendingPathComponent("NestedFolder"))
+
+        XCTAssert(
+            NSDictionary(
+                dictionary: content
+            ).isEqual(
+                to: [
+                    "foo": [
+                        "bar": [[
+                            ["qux": "quux"]
+                        ]]
+                    ]
+                ]
+            ), "Expected and loaded dictionaries are not the same"
+        )
+    }
 }
