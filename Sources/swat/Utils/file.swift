@@ -5,30 +5,18 @@ struct Path {
     static let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     static let assets = Path.root.appendingPathComponent("Assets")
     static let testAssets = Path.assets.appendingPathComponent("Test")
-}
 
-extension String {
-    var url: URL {
-        return URL(fileURLWithPath: self)
-    }
+    static let yamlRegex = try! NSRegularExpression(pattern: ".+\\.yml$")
 
-    var fileName: String {
-        return self.url.lastPathComponent
-    }
-
-    var folderPath: URL {
-        return self.url.deletingLastPathComponent()
+    static func isYaml(_ path: String) -> Bool {
+        let range = NSRange(location: 0, length: path.count)
+        return Path.yamlRegex.firstMatch(in: path, options: [], range: range) != nil
     }
 }
 
-func isYamlFilePath(_ path: String) -> Bool {
-    let range = NSRange(location: 0, length: path.count)
-    let regex = try! NSRegularExpression(pattern: ".+\\.yml$")
-    return regex.firstMatch(in: path, options: [], range: range) != nil
-}
 
-func handleValue(_ value: Any, in directory: URL = Path.assets) throws -> Any {
-    if let stringifiedValue = value as? String, isYamlFilePath(stringifiedValue) {
+private func handleValue(_ value: Any, in directory: URL = Path.assets) throws -> Any {
+    if let stringifiedValue = value as? String, Path.isYaml(stringifiedValue) {
         let nestedPath = directory.appendingPathComponent(stringifiedValue.folderPath.relativePath)
         let nestedContent = try! read(from: stringifiedValue.fileName, in: nestedPath)
 
@@ -42,7 +30,7 @@ func handleValue(_ value: Any, in directory: URL = Path.assets) throws -> Any {
     return value
 }
 
-func readReferencedFiles(from content: [String: Any], in directory: URL = Path.assets) throws -> [String: Any] {
+private func readReferencedFiles(from content: [String: Any], in directory: URL = Path.assets) throws -> [String: Any] {
     var result = [String: Any]()
 
     for (key, value) in content {
