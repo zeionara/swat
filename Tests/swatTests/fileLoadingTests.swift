@@ -8,7 +8,7 @@ final class FileLoadingTests: XCTestCase {
 
         XCTAssert(
             NSDictionary(
-                dictionary: content
+                dictionary: content.dict
             ).isEqual(
                 to: ["foo": ["bar": ["baz": ["qux", "quux"]]]]
             ), "Expected and loaded dictionaries are not the same"
@@ -20,7 +20,7 @@ final class FileLoadingTests: XCTestCase {
 
         XCTAssert(
             NSDictionary(
-                dictionary: content
+                dictionary: content.dict
             ).isEqual(
                 to: ["foo": ["bar": ["baz": ["qux", "quux"]]]]
             ), "Expected and loaded dictionaries are not the same"
@@ -38,7 +38,7 @@ final class FileLoadingTests: XCTestCase {
 
         XCTAssert(
             NSDictionary(
-                dictionary: content
+                dictionary: content.dict
             ).isEqual(
                 to: ["foo": ["bar": ["baz": ["qux", "quux"]]]]
             ), "Expected and loaded dictionaries are not the same"
@@ -50,7 +50,7 @@ final class FileLoadingTests: XCTestCase {
 
         XCTAssert(
             NSDictionary(
-                dictionary: content
+                dictionary: content.dict
             ).isEqual(
                 to: [
                     "foo": [
@@ -68,7 +68,7 @@ final class FileLoadingTests: XCTestCase {
 
         XCTAssert(
             NSDictionary(
-                dictionary: content
+                dictionary: content.dict
             ).isEqual(
                 to: [
                     "foo": [

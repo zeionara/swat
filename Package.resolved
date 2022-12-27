@@ -1,6 +1,15 @@
 {
   "pins" : [
     {
+      "identity" : "yamlswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/zeionara/YamlSwift.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "01b24b0ca22376bf1cfa037fd73d087cb6c91fb3"
+      }
+    },
+    {
       "identity" : "yams",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jpsim/Yams.git",
