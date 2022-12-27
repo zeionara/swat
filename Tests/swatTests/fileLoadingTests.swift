@@ -80,4 +80,12 @@ final class FileLoadingTests: XCTestCase {
             ), "Expected and loaded dictionaries are not the same"
         )
     }
+
+    func testLinkListExpansion() throws {
+        let content = expand(try! read(from: "foo.yml", in: Path.testAssets.appendingPathComponent("LinkList")))
+
+        XCTAssertEqual(
+            content.count, 4, "Number of expected values is different from what is expected"
+        )
+    }
 }
