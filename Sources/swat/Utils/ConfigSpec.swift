@@ -17,6 +17,9 @@ struct ConfigSpec {
     }
 
     func hasAsIsMark(key: String) -> Bool {
-        return self.yaml[.string("__comment__\(key)")] == .string("as-is")
+        if case let .string(comment) = self.yaml[.string("__comment__\(key)")], comment.starts(with: "as-is") {
+            return true
+        }
+        return false
     }
 }
