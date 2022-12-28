@@ -4,7 +4,7 @@ import XCTest
 
 final class FileLoadingTests: XCTestCase {
     func testFileLoading() throws {
-        let content = try! read(from: "singleFile.yml", in: Path.testAssets)
+        let content = try! ConfigSpecReader(at: Path.testAssets).read(from: "singleFile.yml")
 
         XCTAssert(
             NSDictionary(
@@ -16,7 +16,7 @@ final class FileLoadingTests: XCTestCase {
     }
 
     func testFileReferenceHandling() throws {
-        let content = try! read(from: "foo.yml", in: Path.testAssets.appendingPathComponent("MultipleFiles"))
+        let content = try! ConfigSpecReader(at: Path.testAssets.appendingPathComponent("MultipleFiles")).read(from: "foo.yml")
 
         XCTAssert(
             NSDictionary(
@@ -28,12 +28,11 @@ final class FileLoadingTests: XCTestCase {
     }
 
     func testFileFromOtherFolderLink() throws {
-        let content = try! read(
+        let content = try! ConfigSpecReader(at: Path.testAssets).read(
             """
             foo: 
                 bar: MultipleFiles/baz.yml
-            """,
-            in: Path.testAssets
+            """
         )
 
         XCTAssert(
@@ -46,7 +45,7 @@ final class FileLoadingTests: XCTestCase {
     }
 
     func testSingleFolderLink() throws {
-        let content = try! read(from: "foo.yml", in: Path.testAssets.appendingPathComponent("SingleFolder"))
+        let content = try! ConfigSpecReader(at: Path.testAssets.appendingPathComponent("SingleFolder")).read(from: "foo.yml")
 
         XCTAssert(
             NSDictionary(
@@ -64,7 +63,7 @@ final class FileLoadingTests: XCTestCase {
     }
 
     func testFolderTreeLink() throws {
-        let content = try! read(from: "foo.yml", in: Path.testAssets.appendingPathComponent("NestedFolder"))
+        let content = try! ConfigSpecReader(at: Path.testAssets.appendingPathComponent("NestedFolder")).read(from: "foo.yml")
 
         XCTAssert(
             NSDictionary(
@@ -82,7 +81,7 @@ final class FileLoadingTests: XCTestCase {
     }
 
     func testLinkListExpansion() throws {
-        let content = expand(try! read(from: "foo.yml", in: Path.testAssets.appendingPathComponent("LinkList")))
+        let content = expand(try! ConfigSpecReader(at: Path.testAssets.appendingPathComponent("LinkList")).read(from: "foo.yml"))
 
         XCTAssertEqual(
             content.count, 4, "Number of expected values is different from what is expected"
