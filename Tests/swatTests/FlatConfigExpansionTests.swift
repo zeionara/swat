@@ -2,20 +2,9 @@ import XCTest
 
 @testable import Swat
 
-final class FlatConfigExpansionTests: XCTestCase {
-    var reader: ConfigSpecReader? = nil
-    var expander: Expander? = nil
+final class FlatConfigExpansionTests: ConfigExpansionTests {
 
-    enum InitializationError: Error {
-        case readerOrExpanderIsEmpty
-    }
-
-    override func setUp() {
-        self.reader = ConfigSpecReader()
-        self.expander = Expander()
-    }
-
-    func testBasicConfigExpansion() throws {
+    func testTrivialCase() throws {
         guard let reader = reader, let expander = expander else { throw InitializationError.readerOrExpanderIsEmpty }
 
         let configs = 
