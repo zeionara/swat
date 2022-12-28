@@ -2,23 +2,6 @@ import XCTest
 
 @testable import Swat
 
-struct Foo: Decodable {
-    // enum Category: String, Decodable {
-    //     case foo, bar
-    // }
-
-    // enum CodingKeys: String, CodingKey {
-    //     case fox = "foo", baz = "bar"
-    // }
-
-    enum CodingKeys: String, CodingKey {
-        case fooBar, barBaz
-    }
-
-    let fooBar: Int
-    let barBaz: String
-}
-
 final class ConfigObjectCreationTests: XCTestCase {
     var factory: ConfigFactory? = nil
 
@@ -30,29 +13,38 @@ final class ConfigObjectCreationTests: XCTestCase {
         self.factory = ConfigFactory(at: Path.testAssets.appendingPathComponent("ConfigObjectCreation"))
     }
 
-    func testTrivialCase() throws {
+    func runTest<T>(_ name: String, count targetCount: Int) throws -> [T] where T: Decodable {
         guard let factory = factory else { throw InitializationError.factoryIsEmpty }
 
-        // print(Path.assets.appendingPathComponentIfNotNull(URL(string: "ObjectCreation/Foo")))
-
-        let configs: [Foo] = try factory.make(in: URL(string: "Foo"))
-        print(configs)
-
-        // print(configs)
-
-        // let res = try! factory.make(in: URL(string: "Foo")).map { config in
-        //     let json = try JSONSerialization.data(withJSONObject: config)
-        //     // let decoder = JSONDecoder()
-
-        //     let foo = try! JSONDecoder().decode(Foo.self, from: json)
-        //     return foo
-        // }
-
-        // print(res)
+        let configs: [T] = try factory.make(in: URL(string: name))
 
         XCTAssertEqual(
-            configs.count, 2, "Number of configs is not equal to the expected value"
+            configs.count, targetCount, "Number of configs is not equal to the expected value"
         )
+
+        return configs
+    }
+
+    func testTrivialCase() throws {
+        let _: [TrivialConfig] = try runTest("TrivialConfig", count: 2)
+        // guard let factory = factory else { throw InitializationError.factoryIsEmpty }
+
+        // let configs: [TrivialConfig] = try factory.make(in: URL(string: "TrivialConfig"))
+
+        // XCTAssertEqual(
+        //     configs.count, 2, "Number of configs is not equal to the expected value"
+        // )
+    }
+
+    func testMultiwordCase() throws {
+        let _: [MultiwordConfig] = try runTest("MultiwordConfig", count: 2)
+        // guard let factory = factory else { throw InitializationError.factoryIsEmpty }
+
+        // let configs: [MultiwordConfig] = try factory.make(in: URL(string: "MultiwordConfig"))
+
+        // XCTAssertEqual(
+        //     configs.count, 2, "Number of configs is not equal to the expected value"
+        // )
     }
 
 }
