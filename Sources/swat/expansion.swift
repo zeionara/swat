@@ -69,6 +69,10 @@ private func expand(dicts configs: [ConfigSpec], keys: [String], name_key: Strin
     return updatedConfigs
 }
 
-func expand(_ spec: ConfigSpec, name_key: String = DEFAULT_NAME_KEY) -> [ConfigSpec] {
+func expand(_ spec: ConfigSpec, name_key: String) -> [ConfigSpec] {
     return expand(config: spec, name_key: name_key)
+}
+
+func expand(_ spec: ConfigSpec) -> [ConfigSpec] {
+    return expand(config: spec, name_key: DEFAULT_NAME_KEY)
 }

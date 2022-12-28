@@ -81,7 +81,9 @@ final class FileLoadingTests: XCTestCase {
     }
 
     func testLinkListExpansion() throws {
-        let content = expand(try! ConfigSpecReader(at: Path.testAssets.appendingPathComponent("LinkList")).read(from: "foo.yml"))
+        let content =
+            try! ConfigSpecReader(at: Path.testAssets.appendingPathComponent("LinkList")).read(from: "foo.yml")
+            |> expand
 
         XCTAssertEqual(
             content.count, 4, "Number of expected values is different from what is expected"

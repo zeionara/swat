@@ -4,15 +4,15 @@ import XCTest
 
 final class ConfigExpansionTests: XCTestCase {
     func testFlatConfigExpansion() throws {
-        let configs = expand(
-            try! read(
+        let configs = 
+            try! ConfigSpecReader().read(
                 """
                 foo:
                     - bar
                     - baz
                 """
             )
-        )
+            |> expand
 
         XCTAssertEqual(
             configs.count, 2, "Number of configs is not equal to the expected value"
@@ -20,15 +20,15 @@ final class ConfigExpansionTests: XCTestCase {
     }
 
     func testListWhichMustNotBeExpanded() throws {
-        let configs = try! expand(
-            read(
+        let configs = 
+            try! ConfigSpecReader().read(
                 """
                 foo: # as-is
                     - bar
                     - baz
                 """
             )
-        )
+            |> expand
 
         XCTAssertEqual(
             configs.count, 1, "Number of configs is not equal to the expected value"
