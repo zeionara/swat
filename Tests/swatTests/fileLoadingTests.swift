@@ -3,6 +3,7 @@ import XCTest
 @testable import Swat
 
 final class FileLoadingTests: XCTestCase {
+
     func testFileLoading() throws {
         let content = try! ConfigSpecReader(at: Path.testAssets).read(from: "singleFile.yml")
 
@@ -83,12 +84,11 @@ final class FileLoadingTests: XCTestCase {
     func testLinkListExpansion() throws {
         let content =
             try! ConfigSpecReader(at: Path.testAssets.appendingPathComponent("LinkList")).read(from: "foo.yml")
-            |> expand
-
-        print(content)
+            |> Expander().expand
 
         XCTAssertEqual(
             content.count, 4, "Number of expected values is different from what is expected"
         )
     }
+
 }

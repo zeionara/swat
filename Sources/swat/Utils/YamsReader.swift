@@ -2,7 +2,7 @@ import Foundation
 import Yams
 
 struct YamsReader: YamlReaderProtocol {
-    let root: URL
+    var root: URL = Path.assets
 
     func read(_ content: String, in directory: URL? = Path.assets) throws -> [String: Any] {
         return try readReferencedFiles(

@@ -2,7 +2,7 @@ import Foundation
 import Yaml
 
 struct YamlReader: YamlReaderProtocol {
-    let root: URL
+    var root: URL = Path.assets
 
     func read(_ content: String, in directory: URL? = Path.assets) throws -> Yaml {
         return try .dictionary(
