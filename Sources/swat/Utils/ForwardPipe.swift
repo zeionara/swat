@@ -9,3 +9,7 @@ infix operator |> : ForwardPipe
 func |> <T, U>(value: T, function: ((T) -> U)) -> U {
     return function(value)
 }
+
+func |> <T, U>(value: T, function: ((T) throws -> U)) throws -> U {
+    return try function(value)
+}
