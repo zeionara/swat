@@ -21,4 +21,14 @@ extension String {
             .map { $0.offset > 0 ? $0.element.capitalized : $0.element.lowercased() }
             .joined()
     }
+
+    func joinIfNotNone(prefix: String?, separator: String) -> String {
+        if let prefix = prefix {
+            if self.count == 0 {
+                return prefix
+            }
+            return [prefix, self].joined(separator: separator)
+        }
+        return self
+    }
 }

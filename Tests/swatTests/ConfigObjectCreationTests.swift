@@ -68,4 +68,14 @@ final class ConfigObjectCreationTests: XCTestCase {
         }
     }
 
+    func testCustomConfigName() throws {
+        guard let factory = factory else { throw InitializationError.factoryIsEmpty }
+
+        let configs: [TrivialConfig] = try factory.make(from: "custom-name-prefix.yml", in: URL(string: "TrivialConfig")).sorted{ $0.foo < $1.foo }
+
+        XCTAssertEqual(
+            configs[0].name, "custom;foo=17", "Incorrect config name"
+        )
+    }
+
 }
