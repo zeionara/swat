@@ -1,5 +1,20 @@
 import Foundation
 
+struct AnyKey: CodingKey {
+    var stringValue: String
+    var intValue: Int?
+    
+    init(stringValue: String) {
+        self.stringValue = stringValue
+        self.intValue = nil
+    }
+    
+    init(intValue: Int) {
+        self.stringValue = String(intValue)
+        self.intValue = intValue
+    }
+}
+
 struct ConfigFactory {
     let root: URL
     let reader: ConfigSpecReader
@@ -11,7 +26,7 @@ struct ConfigFactory {
         expander = Expander()
     }
 
-    func make(from fileName: String, in directory: URL? = nil) {
+    func make<T>(from fileName: String, in directory: URL? = nil) throws -> [T] where T: Decodable {
         // var configs: [[String: Any]]
 
         let configs = try! reader.read(from: fileName, in: root.appendingPathComponentIfNotNull(directory)) |> expander.expand
@@ -22,10 +37,22 @@ struct ConfigFactory {
         //     configs = (try! reader.read(from: fileName, in: root) |> expander.expand)
         // }
 
-        print(configs)
+        return try configs.map {
+            let decoder = JSONDecoder()
+
+            decoder.keyDecodingStrategy = .custom { keys in
+                let lastComponent = keys.last!.stringValue
+                return AnyKey(stringValue: lastComponent.camelCased(with: "-"))
+            }
+
+            return try decoder.decode(
+                T.self,
+                from: try JSONSerialization.data(withJSONObject: $0)
+            )
+        }
     }
 
-    func make(in directory: URL? = nil) {
-        return make(from: "default.yml", in: directory)
+    func make<T>(in directory: URL? = nil) throws -> [T] where T: Decodable {
+        return try make(from: "default.yml", in: directory)
     }
 }

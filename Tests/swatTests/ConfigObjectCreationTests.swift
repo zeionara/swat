@@ -2,6 +2,23 @@ import XCTest
 
 @testable import Swat
 
+struct Foo: Decodable {
+    // enum Category: String, Decodable {
+    //     case foo, bar
+    // }
+
+    // enum CodingKeys: String, CodingKey {
+    //     case fox = "foo", baz = "bar"
+    // }
+
+    enum CodingKeys: String, CodingKey {
+        case fooBar, barBaz
+    }
+
+    let fooBar: Int
+    let barBaz: String
+}
+
 final class ConfigObjectCreationTests: XCTestCase {
     var factory: ConfigFactory? = nil
 
@@ -18,11 +35,24 @@ final class ConfigObjectCreationTests: XCTestCase {
 
         // print(Path.assets.appendingPathComponentIfNotNull(URL(string: "ObjectCreation/Foo")))
 
-        factory.make(in: URL(string: "Foo"))
+        let configs: [Foo] = try factory.make(in: URL(string: "Foo"))
+        print(configs)
 
-        // XCTAssertEqual(
-        //     configs.count, 2, "Number of configs is not equal to the expected value"
-        // )
+        // print(configs)
+
+        // let res = try! factory.make(in: URL(string: "Foo")).map { config in
+        //     let json = try JSONSerialization.data(withJSONObject: config)
+        //     // let decoder = JSONDecoder()
+
+        //     let foo = try! JSONDecoder().decode(Foo.self, from: json)
+        //     return foo
+        // }
+
+        // print(res)
+
+        XCTAssertEqual(
+            configs.count, 2, "Number of configs is not equal to the expected value"
+        )
     }
 
 }

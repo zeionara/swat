@@ -1,4 +1,4 @@
-foo:
+foo-bar:
   - 17
   - 18
-bar: baz
+bar-baz: baz
