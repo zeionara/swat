@@ -27,24 +27,45 @@ final class ConfigObjectCreationTests: XCTestCase {
 
     func testTrivialCase() throws {
         let _: [TrivialConfig] = try runTest("TrivialConfig", count: 2)
-        // guard let factory = factory else { throw InitializationError.factoryIsEmpty }
+    }
 
-        // let configs: [TrivialConfig] = try factory.make(in: URL(string: "TrivialConfig"))
-
-        // XCTAssertEqual(
-        //     configs.count, 2, "Number of configs is not equal to the expected value"
-        // )
+    func testCustomizedKeys() throws {
+        let _: [TrivialConfigWithCustomizedKeys] = try runTest("TrivialConfig", count: 2)
     }
 
     func testMultiwordCase() throws {
         let _: [MultiwordConfig] = try runTest("MultiwordConfig", count: 2)
-        // guard let factory = factory else { throw InitializationError.factoryIsEmpty }
+    }
 
-        // let configs: [MultiwordConfig] = try factory.make(in: URL(string: "MultiwordConfig"))
+    func testSingleConfig() throws {
+        guard let factory = factory else { throw InitializationError.factoryIsEmpty }
 
-        // XCTAssertEqual(
-        //     configs.count, 2, "Number of configs is not equal to the expected value"
-        // )
+        let config: TrivialConfig = try factory.makeOne(from: "single.yml", in: URL(string: "TrivialConfig"))
+
+        XCTAssertEqual(
+            config.foo, 17, "Wrong values of created config object properties"
+        )
+
+        XCTAssertEqual(
+            config.bar, "baz", "Wrong values of created config object properties"
+        )
+    }
+
+    func testSingleConfigWithWrongPath() throws {
+        guard let factory = factory else { throw InitializationError.factoryIsEmpty }
+
+        func makeConfig() throws {
+            let _: TrivialConfig = try factory.makeOne(from: "default.yml", in: URL(string: "TrivialConfig"))
+        }
+
+        XCTAssertThrowsError (
+            try makeConfig()
+        ) { error in
+            guard case let .invalidNumberOfElements(count) = (error as! ConfigFactory.ConfigMakingError), count == 2 else {
+                XCTFail("Wrong type of error")
+                return
+            }
+        }
     }
 
 }

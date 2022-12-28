@@ -16,6 +16,10 @@ struct AnyKey: CodingKey {
 }
 
 struct ConfigFactory {
+    enum ConfigMakingError: Error {
+        case invalidNumberOfElements(count: Int)
+    }
+
     let root: URL
     let reader: ConfigSpecReader
     let expander: Expander
@@ -27,15 +31,7 @@ struct ConfigFactory {
     }
 
     func make<T>(from fileName: String, in directory: URL? = nil) throws -> [T] where T: Decodable {
-        // var configs: [[String: Any]]
-
         let configs = try! reader.read(from: fileName, in: root.appendingPathComponentIfNotNull(directory)) |> expander.expand
-
-        // if let directory = directory {
-        //     configs = (try! reader.read(from: fileName, in: root.appendingPathComponentIfNotNull(directory)) |> expander.expand)
-        // } else {
-        //     configs = (try! reader.read(from: fileName, in: root) |> expander.expand)
-        // }
 
         return try configs.map {
             let decoder = JSONDecoder()
@@ -54,5 +50,25 @@ struct ConfigFactory {
 
     func make<T>(in directory: URL? = nil) throws -> [T] where T: Decodable {
         return try make(from: "default.yml", in: directory)
+    }
+
+    func makeOne<T>(from fileName: String, in directory: URL? = nil) throws -> T where T: Decodable {
+        let results: [T] = try make(from: fileName, in: directory)
+
+        guard results.count == 1 else {
+            throw ConfigMakingError.invalidNumberOfElements(count: results.count)
+        }
+
+        return results.first!
+    }
+
+    func makeOne<T>(in directory: URL? = nil) throws -> T where T: Decodable {
+        let results: [T] = try make(in: directory)
+
+        guard results.count == 1 else {
+            throw ConfigMakingError.invalidNumberOfElements(count: results.count)
+        }
+
+        return results.first!
     }
 }
