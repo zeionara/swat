@@ -85,6 +85,8 @@ final class FileLoadingTests: XCTestCase {
             try! ConfigSpecReader(at: Path.testAssets.appendingPathComponent("LinkList")).read(from: "foo.yml")
             |> expand
 
+        print(content)
+
         XCTAssertEqual(
             content.count, 4, "Number of expected values is different from what is expected"
         )

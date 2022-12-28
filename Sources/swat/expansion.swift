@@ -1,33 +1,74 @@
 let DEFAULT_NAME_KEY = "name"
 
-private func expand(config: ConfigSpec, name_key: String) -> [ConfigSpec] {
-    return expand(dicts: [config], keys: config.dict.map{ $0.key }.sorted(), name_key: name_key)
+// Takes a loaded spec, yields a list of expanded configs
+
+func expand(_ spec: ConfigSpec, name_key: String) -> [[String: Any]] {
+    return expand(config: spec, name_key: name_key)
 }
 
-private func expand(config: [String: Any], root: inout [String: Any], key: String, updatedConfigs: inout [ConfigSpec], spec: ConfigSpec, name_key: String) -> Void {
-    for expandedNestedConfig in expand(config: ConfigSpec(dict: config, yaml: spec.yaml[.string(key)]), name_key: name_key) {
-        root[key] = expandedNestedConfig
-        updatedConfigs.append(ConfigSpec(dict: root, yaml: spec.yaml))
-    }
+func expand(_ spec: ConfigSpec) -> [[String: Any]] {
+    return expand(config: spec, name_key: DEFAULT_NAME_KEY)
 }
 
-private func expand(items: [Any], root: inout [String: Any], key: String, updatedConfigs: inout [ConfigSpec], spec: ConfigSpec, name_key: String) -> Void {
-    let hasAsIsMark = spec.hasAsIsMark(key: key)
+// Takes a (fragment of) loaded spec, yields a list of expanded configs
 
-    if hasAsIsMark {
-        root[key] = items
-        updatedConfigs.append(ConfigSpec(dict: root, yaml: spec.yaml))
+extension Array where Element == ConfigSpec {
+    mutating func append(expansionsOf root: inout [String: Any], on config: [String: Any], at key: String, spec: ConfigSpec, nameKey: String) -> Void {
+        for expandedNestedConfig in expand(config: ConfigSpec(dict: config, yaml: spec.yaml[.string(key)]), name_key: nameKey) {
+            root[key] = expandedNestedConfig
+            self.append(ConfigSpec(dict: root, yaml: spec.yaml))
+        }
     }
 
-    items.forEach{ (item) -> Void in
-        if let nestedConfig = item as? [String: Any] {
-            expand(config: nestedConfig, root: &root, key: key, updatedConfigs: &updatedConfigs, spec: spec, name_key: name_key)
-        } else if !hasAsIsMark {
-            root[key] = item
-            updatedConfigs.append(ConfigSpec(dict: root, yaml: spec.yaml))
+    mutating func append(expansionsOf root: inout [String: Any], on items: [Any], at key: String, spec: ConfigSpec, nameKey: String) -> Void {
+        let hasAsIsMark = spec.hasAsIsMark(key: key)
+
+        if hasAsIsMark {
+            root[key] = items
+            self.append(ConfigSpec(dict: root, yaml: spec.yaml))
+        }
+
+        items.forEach{ (item) -> Void in
+            if let nestedConfig = item as? [String: Any] {
+                // expand(config: nestedConfig, root: &root, key: key, updatedConfigs: &updatedConfigs, spec: spec, name_key: name_key)
+                self.append(expansionsOf: &root, on: nestedConfig, at: key, spec: spec, nameKey: nameKey)
+            } else if !hasAsIsMark {
+                root[key] = item
+                self.append(ConfigSpec(dict: root, yaml: spec.yaml))
+            }
         }
     }
 }
+
+private func expand(config: ConfigSpec, name_key: String) -> [[String: Any]] {
+    return expand(dicts: [config], keys: config.dict.map{ $0.key }.sorted(), name_key: name_key).map{ $0.dict }
+}
+
+// private func expand(config: [String: Any], root: inout [String: Any], key: String, updatedConfigs: inout [ConfigSpec], spec: ConfigSpec, name_key: String) -> Void {
+//     for expandedNestedConfig in expand(config: ConfigSpec(dict: config, yaml: spec.yaml[.string(key)]), name_key: name_key) {
+//         root[key] = expandedNestedConfig
+//         updatedConfigs.append(ConfigSpec(dict: root, yaml: spec.yaml))
+//     }
+// }
+
+// private func expand(items: [Any], root: inout [String: Any], key: String, updatedConfigs: inout [ConfigSpec], spec: ConfigSpec, name_key: String) -> Void {
+//     let hasAsIsMark = spec.hasAsIsMark(key: key)
+// 
+//     if hasAsIsMark {
+//         root[key] = items
+//         updatedConfigs.append(ConfigSpec(dict: root, yaml: spec.yaml))
+//     }
+// 
+//     items.forEach{ (item) -> Void in
+//         if let nestedConfig = item as? [String: Any] {
+//             // expand(config: nestedConfig, root: &root, key: key, updatedConfigs: &updatedConfigs, spec: spec, name_key: name_key)
+//             updatedConfigs.append(expansionsOf: &root, having: nestedConfig, at: key, spec: spec, nameKey: name_key)
+//         } else if !hasAsIsMark {
+//             root[key] = item
+//             updatedConfigs.append(ConfigSpec(dict: root, yaml: spec.yaml))
+//         }
+//     }
+// }
 
 private func expand(dicts configs: [ConfigSpec], keys: [String], name_key: String) -> [ConfigSpec] {
     if configs.count < 1 {
@@ -45,14 +86,16 @@ private func expand(dicts configs: [ConfigSpec], keys: [String], name_key: Strin
             // expand list
 
             if let items = value as? [Any] {
-                expand(items: items, root: &updatedConfig, key: key, updatedConfigs: &updatedConfigs, spec: config, name_key: name_key)
+                // expand(items: items, root: &updatedConfig, key: key, updatedConfigs: &updatedConfigs, spec: config, name_key: name_key)
+                updatedConfigs.append(expansionsOf: &updatedConfig, on: items, at: key, spec: config, nameKey: name_key)
                 return
             }
 
             // expand object
 
             if let nestedConfig = value as? [String: Any] {
-                expand(config: nestedConfig, root: &updatedConfig, key: key, updatedConfigs: &updatedConfigs, spec: config, name_key: name_key)
+                // expand(config: nestedConfig, root: &updatedConfig, key: key, updatedConfigs: &updatedConfigs, spec: config, name_key: name_key)
+                updatedConfigs.append(expansionsOf: &updatedConfig, on: nestedConfig, at: key, spec: config, nameKey: name_key)
                 return
             }
 
@@ -67,12 +110,4 @@ private func expand(dicts configs: [ConfigSpec], keys: [String], name_key: Strin
     }
 
     return updatedConfigs
-}
-
-func expand(_ spec: ConfigSpec, name_key: String) -> [ConfigSpec] {
-    return expand(config: spec, name_key: name_key)
-}
-
-func expand(_ spec: ConfigSpec) -> [ConfigSpec] {
-    return expand(config: spec, name_key: DEFAULT_NAME_KEY)
 }
