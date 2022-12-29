@@ -33,18 +33,6 @@ final class ConfigObjectCreationTests: XCTestCase {
             configs.count, targetCount, "Number of configs is not equal to the expected value"
         )
 
-        // print(try typeInfo(of: T.self).property(named: "foo").type)
-        // print(try T.type(of: "foo"))
-        // print(try Foo.type(of: "bar") as Any as? Array<Any>.Type)
-        // print(try Foo.type(of: "bar"))
-        // print((try typeInfo(of: Foo.self).property(named: "bar").type as? Array<String>.Type)?.Element)
-        // let arrayType = try typeInfo(of: Foo.self).property(named: "bar").type
-        // let info = try typeInfo(of: arrayType)
-        // print(info.mangledName)
-        // print(info.genericTypes.first!)
-
-        // print(try Foo.getElementTypeIfIsArray(property: "bar"))
-
         return configs
     }
 

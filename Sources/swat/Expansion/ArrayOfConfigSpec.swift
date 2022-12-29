@@ -16,13 +16,8 @@ extension Array where Element == ConfigSpec {
     }
 
     mutating func append(expansionsOf root: inout [String: Any], on items: [Any], at key: String, spec: ConfigSpec, expander: Expander, as type: Config.Type?) throws -> Void {
-        // var propertyHasArrayType = false
 
-        // if let propertyType = try? type?.type(of: key) {
-
-        // }
-
-        if spec.hasAsIsMark(key: key) { //|| !spec.hasExpandMark(key: key) && try?  {
+        if spec.hasAsIsMark(key: key) {
             root[key] = items
             self.append(ConfigSpec(dict: root, yaml: spec.yaml))  // TODO: implement deep expansion of elements inside such lists
             return
@@ -36,7 +31,6 @@ extension Array where Element == ConfigSpec {
             root[spec.addPrefix(toKey: key)] = item
 
             if let nestedConfig = item as? [String: Any] {
-                // try self.append(expansionsOf: &root, on: nestedConfig, at: key, spec: spec, expander: expander, as: type)
                 try self.append(expansionsOf: &root, on: nestedConfig, at: key, spec: spec, expander: expander, childAs: type?.type(of: key) as? Config.Type)
             } else {
                 root[key] = item

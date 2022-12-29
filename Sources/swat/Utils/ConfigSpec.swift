@@ -21,7 +21,6 @@ struct ConfigSpec {
     }
 
     subscript(key: String) -> ConfigSpec {
-        // print("subscripting using key \(key), current prefix: \(keyPrefix)")
         return ConfigSpec(
             dict: (self.dict)[key]! as! [String: Any],
             yaml: self.yaml[.string(key)],
@@ -30,7 +29,7 @@ struct ConfigSpec {
     }
 
     func hasMark(key: String, mark: String) -> Bool {
-        if case let .string(comment) = self.yaml[.string("__comment__\(key)")], comment.starts(with: mark) {
+        if case let .string(comment) = self.yaml[.string("__comment__\(key)")], comment.starts(with: mark) {  // TODO: make __comment__ a static const
             return true
         }
         return false

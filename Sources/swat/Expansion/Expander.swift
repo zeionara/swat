@@ -9,12 +9,10 @@ struct Expander {
 
     var nameKey: String = "name"
 
-    // func expand(config: ConfigSpec) throws -> [[String: Any]] {  // convenience interface for the expand method, which takes only one parameter and hence can be piped
-    func expand(as type: Any.Type?) throws -> (ConfigSpec) throws -> [[String: Any]] {  // convenience interface for the expand method, which takes only one parameter and hence can be piped
+    func expand(as type: Any.Type?) throws -> (ConfigSpec) throws -> [[String: Any]] {  // type parameter is used for taking decisions when handling lists - whether they should be expanded or not
         return { config in
             if let unwrappedType = type {
                 if let unwrappedTypeAsConfig = unwrappedType as? Config.Type {
-                    // print(try unwrappedTypeAsConfig.type(of: "foo"))
                     return try expand(config: config, as: unwrappedTypeAsConfig, isRecursiveCall: false)
                 } else {
                     throw CastingError.isNotConfig(type: unwrappedType)
