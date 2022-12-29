@@ -62,7 +62,7 @@ final class ConfigObjectCreationTests: XCTestCase {
         XCTAssertThrowsError (
             try makeConfig()
         ) { error in
-            guard case let .invalidNumberOfElements(count) = (error as! ConfigFactory.ConfigMakingError), count == 2 else {
+            guard case let .invalidNumberOfElements(count) = (error as? ConfigFactory.ConfigMakingError), count == 2 else {
                 XCTFail("Wrong type of error")
                 return
             }
@@ -99,6 +99,24 @@ final class ConfigObjectCreationTests: XCTestCase {
         XCTAssertEqual(
             config.bar, "bazquxbaz", "Wrong result of attribute reference resolution"
         )
+    }
+
+    func testRecursiveAttributeReference() throws {
+        guard let factory = factory else { throw InitializationError.factoryIsEmpty }
+
+        func makeConfig() throws {
+            let config: ConfigWithAttributeReference = try factory.makeOne(from: "recursive.yml", in: URL(string: "ConfigWithAttributeReference"))
+            print(config)
+        }
+
+        XCTAssertThrowsError (
+            try makeConfig()
+        ) { error in
+            guard case .recursiveReferencesAreForbidden = (error as? AttributeReferenceResolutionError) else {
+                XCTFail("Wrong type of error")
+                return
+            }
+        }
     }
 
 }

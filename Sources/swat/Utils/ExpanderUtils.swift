@@ -2,6 +2,7 @@ import Foundation
 
 enum AttributeReferenceResolutionError: Error {
     case missing(attribute: String)
+    case recursiveReferencesAreForbidden(of: String)
 }
 
 extension Expander {
@@ -54,60 +55,21 @@ extension Expander {
 
     static func resolvingAttributeReferences(in config: [String: Any]) throws -> [String: Any] {
         var updatedConfig = config
-        var nResolvedReferences: Int
-
-        // repeat {
-        //     nResolvedReferences = 0
 
         for (key, value) in updatedConfig {
-            var resolved = false
-
             if let value = value as? String {
-
-                // print("before:", updatedConfig)
-                // (resolved, updatedConfig[key]) = try "\\{\\{(?<attribute>[^}{]+)\\}\\}".replaceOccurrences(in: value, through: "attribute") { attribute in
-                updatedConfig[key] = try "\\{\\{(?<attribute>[^}{]+)\\}\\}".replaceOccurrences(in: value, through: "attribute") { attribute in
+                updatedConfig[key] = try NSRegularExpression(pattern: "\\{\\{(?<attribute>[^}{]+)\\}\\}").replaceOccurrences(in: value, through: "attribute") { attribute in
+                    if attribute == key {
+                        throw AttributeReferenceResolutionError.recursiveReferencesAreForbidden(of: attribute)
+                    }
                     if let referencedValue = updatedConfig[attribute] as? String {
                         return referencedValue
                     } else {
                         throw AttributeReferenceResolutionError.missing(attribute: attribute)
                     }
                 }
-                // print("after:", updatedConfig)
-
-                // let range = NSRange(location: 0, length: value.count)
-
-                // let regex = try! NSRegularExpression(pattern: "\\{\\{(?<attribute>[^}{]+)\\}\\}")
-
-                // for matchRange in regex.matches(in: value, options: [], range: range) {
-                //     // if let valueRange = Range(matchRange.range, in: value) {
-                //     if let patternRange = Range(matchRange.range, in: value), let valueRange = Range(matchRange.range(withName: "attribute"), in: value) {
-                //         nResolvedReferences += 1
-
-                //         let referencedName = String(value[valueRange])
-                //         let patternMatch = String(value[patternRange])
-
-                //         if let referencedValue = updatedConfig[referencedName] as? String {
-                //             updatedConfig[key] = value.replacingOccurrences(of: patternMatch, with: referencedValue)
-                //             resolved = true
-                //         } else {
-                //             throw AttributeReferenceResolutionError.missing(attribute: referencedName)
-                //         }
-
-                //         // print("found caputure:", referencedName, patternMatch)
-                //         break
-                //     }
-                // 
-                // }
-
-                // print(value)
             }
-
-            // if !resolved {
-            //     updatedConfig[key] = value
-            // }
         }
-        // } while (nResolvedReferences > 0)
 
         return updatedConfig
     }
