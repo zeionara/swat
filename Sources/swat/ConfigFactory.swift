@@ -1,6 +1,8 @@
 import Foundation
 
 struct ConfigFactory {
+    public static let defaultFileName = "default.yml"
+
     enum ConfigMakingError: Error {
         case invalidNumberOfElements(count: Int)
     }
@@ -16,6 +18,7 @@ struct ConfigFactory {
     }
 
     func make<T>(from fileName: String, in directory: URL? = nil) throws -> [T] where T: Decodable {
+
         let configs = try reader.read(from: fileName, in: root.appendingPathComponentIfNotNull(directory)) |> expander.expand(as: T.self)
         let decoder = JSONDecoder()
 
@@ -33,7 +36,7 @@ struct ConfigFactory {
     }
 
     func make<T>(in directory: URL? = nil) throws -> [T] where T: Decodable {
-        return try make(from: "default.yml", in: directory)
+        return try make(from: ConfigFactory.defaultFileName, in: directory)
     }
 
     func makeOne<T>(from fileName: String, in directory: URL? = nil) throws -> T where T: Decodable {

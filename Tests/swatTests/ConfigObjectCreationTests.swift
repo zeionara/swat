@@ -14,10 +14,10 @@ final class ConfigObjectCreationTests: XCTestCase {
         self.factory = ConfigFactory(at: Path.testAssets.appendingPathComponent("ConfigObjectCreation"))
     }
 
-    func runTest<T>(_ name: String, count targetCount: Int) throws -> [T] where T: Config {
+    func runTest<T>(from fileName: String = ConfigFactory.defaultFileName, in directory: String, count targetCount: Int) throws -> [T] where T: Config {
         guard let factory = factory else { throw InitializationError.factoryIsEmpty }
 
-        let configs: [T] = try factory.make(in: URL(string: name))
+        let configs: [T] = try factory.make(from: fileName, in: URL(string: directory))
 
         XCTAssertEqual(
             configs.count, targetCount, "Number of configs is not equal to the expected value"
@@ -27,15 +27,15 @@ final class ConfigObjectCreationTests: XCTestCase {
     }
 
     func testTrivialCase() throws {
-        let _: [TrivialConfig] = try runTest("TrivialConfig", count: 2)
+        let _: [TrivialConfig] = try runTest(in: "TrivialConfig", count: 2)
     }
 
     func testCustomizedKeys() throws {
-        let _: [TrivialConfigWithCustomizedKeys] = try runTest("TrivialConfig", count: 2)
+        let _: [TrivialConfigWithCustomizedKeys] = try runTest(in: "TrivialConfig", count: 2)
     }
 
     func testMultiwordCase() throws {
-        let _: [MultiwordConfig] = try runTest("MultiwordConfig", count: 2)
+        let _: [MultiwordConfig] = try runTest(in: "MultiwordConfig", count: 2)
     }
 
     func testSingleConfig() throws {
@@ -80,7 +80,11 @@ final class ConfigObjectCreationTests: XCTestCase {
     }
 
     func testConfigWithArrayTypedProperty() throws {
-        let _: [ConfigWithArrayTypedProperty] = try runTest("ConfigWithArrayTypedProperty", count: 2)
+        let _: [ConfigWithArrayTypedProperty] = try runTest(in: "ConfigWithArrayTypedProperty", count: 2)
+    }
+
+    func testForceArrayTypedPropertyExpansion() throws {
+        let _: [ConfigWithArrayTypedProperty] = try runTest(from: "forcedArrayExpansion.yml", in: "ConfigWithArrayTypedProperty", count: 4)
     }
 
 }

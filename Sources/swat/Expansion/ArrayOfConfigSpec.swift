@@ -22,6 +22,7 @@ extension Array where Element == ConfigSpec {
             self.append(ConfigSpec(dict: root, yaml: spec.yaml))  // TODO: implement deep expansion of elements inside such lists
             return
         } else if let _ = try type?.getElementTypeIfIsArray(property: key.fromKebabCase), !spec.hasExpandMark(key: key) {
+            // TODO: Implement automatic inference of the expand label? (it is complicated because of lists may consist of many layers and contain objects of any type)
             root[key] = items
             self.append(ConfigSpec(dict: root, yaml: spec.yaml))  // TODO: implement deep expansion of elements inside such lists
             return
