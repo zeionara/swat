@@ -3,16 +3,6 @@ import Runtime
 
 @testable import Swat
 
-struct Foo: Config {
-    let bar: [String]
-
-    let name: String
-
-    static func decode(key: String) throws -> String {
-        return key
-    }
-}
-
 final class ConfigObjectCreationTests: XCTestCase {
     var factory: ConfigFactory? = nil
 
