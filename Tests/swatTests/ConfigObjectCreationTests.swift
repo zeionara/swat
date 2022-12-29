@@ -87,4 +87,9 @@ final class ConfigObjectCreationTests: XCTestCase {
         let _: [ConfigWithArrayTypedProperty] = try runTest(from: "forcedArrayExpansion.yml", in: "ConfigWithArrayTypedProperty", count: 4)
     }
 
+    func testNestedObjectsDecoding() throws {
+        let configs: [ConfigWithNestedObject] = try runTest(in: "ConfigWithNestedObject", count: 2)
+        print(configs)
+    }
+
 }

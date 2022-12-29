@@ -1,6 +1,6 @@
 import Swat
 
-struct MultiwordConfig: ConfigWithDefaultKeys {
+struct MultiwordConfig: ConfigWithDefaultKeys, RootConfig {
     let fooBar: Int
     let barBaz: String
 

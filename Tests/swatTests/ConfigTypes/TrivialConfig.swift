@@ -1,6 +1,6 @@
 import Swat
 
-struct TrivialConfig: ConfigWithDefaultKeys {
+struct TrivialConfig: ConfigWithDefaultKeys, RootConfig {
     let foo: Int
     let bar: String
 

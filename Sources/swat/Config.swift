@@ -1,8 +1,10 @@
 import Runtime
 
-public protocol Config: Decodable {
+public protocol RootConfig: Config {
     var name: String { get }
+}
 
+public protocol Config: Decodable {
     static func decode(key: String) throws -> String
 }
 

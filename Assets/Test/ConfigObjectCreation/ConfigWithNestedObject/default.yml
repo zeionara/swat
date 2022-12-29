@@ -1,0 +1,6 @@
+trivial:
+  foo:
+    - 17
+    - 18
+  bar: baz
+qux: quux

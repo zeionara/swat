@@ -1,7 +1,7 @@
 import Swat
 import Runtime
 
-struct TrivialConfigWithCustomizedKeys: ConfigWithCustomizedKeys {
+struct TrivialConfigWithCustomizedKeys: ConfigWithCustomizedKeys, RootConfig {
     enum CodingKeys: String, CodingKey, CaseIterable {
         case qux = "foo", quux = "bar", name
     }
