@@ -32,15 +32,14 @@ struct ConfigFactory {
 
     func make<T>(from fileName: String, in directory: URL? = nil) throws -> [T] where T: Decodable {
         let configs = try! reader.read(from: fileName, in: root.appendingPathComponentIfNotNull(directory)) |> expander.expand
+        let decoder = JSONDecoder()
+
+        decoder.keyDecodingStrategy = .custom { keys in
+            let lastComponent = keys.last!.stringValue
+            return AnyKey(stringValue: lastComponent.camelCased(with: "-"))
+        }
 
         return try configs.map {
-            let decoder = JSONDecoder()
-
-            decoder.keyDecodingStrategy = .custom { keys in
-                let lastComponent = keys.last!.stringValue
-                return AnyKey(stringValue: lastComponent.camelCased(with: "-"))
-            }
-
             return try decoder.decode(
                 T.self,
                 from: try JSONSerialization.data(withJSONObject: $0)
