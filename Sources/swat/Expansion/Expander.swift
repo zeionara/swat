@@ -31,10 +31,10 @@ struct Expander {
         let configs = try expand(configs: [config], keys: config.dict.map{ $0.key }.sorted(), as: type)
 
         if isRecursiveCall {
-            return configs.map{ $0.dict }
+            return try configs.map{ try Expander.resolvingAttributeReferences(in: $0.dict) }
         }
 
-        return gatherNameComponents(configs)
+        return try gatherNameComponentsAndResolveAttributeReferences(configs)
     }
 
     func expand(configs: [ConfigSpec], keys: [String], as type: Config.Type?) throws -> [ConfigSpec] {

@@ -1,3 +1,9 @@
+import Foundation
+
+enum AttributeReferenceResolutionError: Error {
+    case missing(attribute: String)
+}
+
 extension Expander {
     static let nameKeySeparator = ";"
     static let nameKeyValueSeparator = "="
@@ -25,9 +31,9 @@ extension Expander {
         }
     }
 
-    func gatherNameComponents(_ configs: [ConfigSpec]) -> [[String: Any]] {
-        return configs.map{ config in
-            let config = config.dict
+    func gatherNameComponentsAndResolveAttributeReferences(_ configs: [ConfigSpec]) throws -> [[String: Any]] {
+        return try configs.map{ config in
+            let config = try Expander.resolvingAttributeReferences(in: config.dict)
 
             var name = [String: Any]()
             let namePrefix = config[nameKey]
@@ -44,5 +50,54 @@ extension Expander {
 
             return configWithoutNameComponents
         }
+    }
+
+    static func resolvingAttributeReferences(in config: [String: Any]) throws -> [String: Any] {
+        var updatedConfig = config
+        var nResolvedReferences: Int
+
+        repeat {
+            nResolvedReferences = 0
+
+            for (key, value) in updatedConfig {
+                var resolved = false
+
+                if let value = value as? String {
+
+                    let range = NSRange(location: 0, length: value.count)
+
+                    let regex = try! NSRegularExpression(pattern: "\\{\\{(?<attribute>[^}{]+)\\}\\}")
+
+                    for matchRange in regex.matches(in: value, options: [], range: range) {
+                        // if let valueRange = Range(matchRange.range, in: value) {
+                        if let patternRange = Range(matchRange.range, in: value), let valueRange = Range(matchRange.range(withName: "attribute"), in: value) {
+                            nResolvedReferences += 1
+
+                            let referencedName = String(value[valueRange])
+                            let patternMatch = String(value[patternRange])
+
+                            if let referencedValue = updatedConfig[referencedName] as? String {
+                                updatedConfig[key] = value.replacingOccurrences(of: patternMatch, with: referencedValue)
+                                resolved = true
+                            } else {
+                                throw AttributeReferenceResolutionError.missing(attribute: referencedName)
+                            }
+
+                            // print("found caputure:", referencedName, patternMatch)
+                            break
+                        }
+                    
+                    }
+
+                    // print(value)
+                }
+
+                if !resolved {
+                    updatedConfig[key] = value
+                }
+            }
+        } while (nResolvedReferences > 0)
+
+        return updatedConfig
     }
 }

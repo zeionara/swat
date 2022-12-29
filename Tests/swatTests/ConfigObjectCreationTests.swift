@@ -91,4 +91,14 @@ final class ConfigObjectCreationTests: XCTestCase {
         let _: [ConfigWithNestedObject] = try runTest(in: "ConfigWithNestedObject", count: 2)
     }
 
+    func testAttributeReferenceResoulution() throws {
+        guard let factory = factory else { throw InitializationError.factoryIsEmpty }
+
+        let config: ConfigWithAttributeReference = try factory.makeOne(in: URL(string: "ConfigWithAttributeReference"))
+
+        XCTAssertEqual(
+            config.bar, "bazquxbaz", "Wrong result of attribute reference resolution"
+        )
+    }
+
 }
