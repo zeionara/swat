@@ -1,4 +1,5 @@
 import XCTest
+import Runtime
 
 @testable import Swat
 
@@ -13,7 +14,7 @@ final class ConfigObjectCreationTests: XCTestCase {
         self.factory = ConfigFactory(at: Path.testAssets.appendingPathComponent("ConfigObjectCreation"))
     }
 
-    func runTest<T>(_ name: String, count targetCount: Int) throws -> [T] where T: Decodable {
+    func runTest<T>(_ name: String, count targetCount: Int) throws -> [T] where T: Config {
         guard let factory = factory else { throw InitializationError.factoryIsEmpty }
 
         let configs: [T] = try factory.make(in: URL(string: name))
@@ -21,6 +22,9 @@ final class ConfigObjectCreationTests: XCTestCase {
         XCTAssertEqual(
             configs.count, targetCount, "Number of configs is not equal to the expected value"
         )
+
+        // print(try typeInfo(of: T.self).property(named: "foo").type)
+        // print(try T.type(of: "foo"))
 
         return configs
     }

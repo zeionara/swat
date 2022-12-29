@@ -14,7 +14,8 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/jpsim/Yams.git", from: "5.0.1"),
-        .package(url: "https://github.com/zeionara/YamlSwift.git", branch: "master")
+        .package(url: "https://github.com/zeionara/YamlSwift.git", branch: "master"),
+        .package(url: "https://github.com/wickwirew/Runtime.git", branch: "master")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -23,7 +24,8 @@ let package = Package(
             name: "Swat",
             dependencies: [
                 "Yams",
-                .product(name: "Yaml", package: "YamlSwift")
+                .product(name: "Yaml", package: "YamlSwift"),
+                "Runtime"
             ],
             path: "Sources/swat"
         ),
