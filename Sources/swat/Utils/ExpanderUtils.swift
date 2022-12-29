@@ -25,12 +25,14 @@ extension Expander {
         }
     }
 
-    func gatherNameComponents(_ configs: [[String: Any]]) -> [[String: Any]] {
+    func gatherNameComponents(_ configs: [ConfigSpec]) -> [[String: Any]] {
         return configs.map{ config in
+            let config = config.dict
+
             var name = [String: Any]()
             let namePrefix = config[nameKey]
 
-            var config = gatherNameComponents(config: config, result: &name) as! [String: Any]
+            var configWithoutNameComponents = gatherNameComponents(config: config, result: &name) as! [String: Any]
 
             let joinedName = String(
                 name.keys.sorted().map { key in
@@ -38,9 +40,9 @@ extension Expander {
                 }.joined(separator: Expander.nameKeySeparator)
             ).joinIfNotNone(prefix: namePrefix as? String, separator: Expander.nameKeySeparator)
 
-            config[nameKey] = joinedName
+            configWithoutNameComponents[nameKey] = joinedName
 
-            return config
+            return configWithoutNameComponents
         }
     }
 }

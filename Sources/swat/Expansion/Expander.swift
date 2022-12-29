@@ -28,10 +28,10 @@ struct Expander {
     }
 
     func expand(config: ConfigSpec, as type: Config.Type?, isRecursiveCall: Bool) throws -> [[String: Any]] {
-        let configs = try expand(configs: [config], keys: config.dict.map{ $0.key }.sorted(), as: type).map{ $0.dict }
+        let configs = try expand(configs: [config], keys: config.dict.map{ $0.key }.sorted(), as: type)
 
         if isRecursiveCall {
-            return configs
+            return configs.map{ $0.dict }
         }
 
         return gatherNameComponents(configs)

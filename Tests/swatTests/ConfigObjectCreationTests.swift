@@ -88,8 +88,7 @@ final class ConfigObjectCreationTests: XCTestCase {
     }
 
     func testNestedObjectsDecoding() throws {
-        let configs: [ConfigWithNestedObject] = try runTest(in: "ConfigWithNestedObject", count: 2)
-        print(configs)
+        let _: [ConfigWithNestedObject] = try runTest(in: "ConfigWithNestedObject", count: 2)
     }
 
 }
