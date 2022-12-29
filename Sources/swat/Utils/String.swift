@@ -22,6 +22,10 @@ extension String {
             .joined()
     }
 
+    var fromKebabCase: String {
+        return camelCased(with: "-")
+    }
+
     func joinIfNotNone(prefix: String?, separator: String) -> String {
         if let prefix = prefix {
             if self.count == 0 {

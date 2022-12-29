@@ -29,11 +29,19 @@ struct ConfigSpec {
         )
     }
 
-    func hasAsIsMark(key: String) -> Bool {
-        if case let .string(comment) = self.yaml[.string("__comment__\(key)")], comment.starts(with: "as-is") {
+    func hasMark(key: String, mark: String) -> Bool {
+        if case let .string(comment) = self.yaml[.string("__comment__\(key)")], comment.starts(with: mark) {
             return true
         }
         return false
+    }
+
+    func hasAsIsMark(key: String) -> Bool {
+        return hasMark(key: key, mark: "as-is")
+    }
+
+    func hasExpandMark(key: String) -> Bool {
+        return hasMark(key: key, mark: "expand")
     }
 
     func addPrefix(toKey key: String) -> String {

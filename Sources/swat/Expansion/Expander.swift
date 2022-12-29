@@ -3,14 +3,34 @@ struct Expander {
         case missingValue(forKey: String)
     }
 
-    var nameKey: String = "name"
-
-    func expand(config: ConfigSpec) throws -> [[String: Any]] {  // convenience interface for the expand method, which takes only one parameter and hence can be piped
-        return try expand(config: config, isRecursiveCall: false)
+    enum CastingError: Error {
+        case isNotConfig(type: Any.Type)
     }
 
-    func expand(config: ConfigSpec, isRecursiveCall: Bool) throws -> [[String: Any]] {
-        let configs = try expand(configs: [config], keys: config.dict.map{ $0.key }.sorted()).map{ $0.dict }
+    var nameKey: String = "name"
+
+    // func expand(config: ConfigSpec) throws -> [[String: Any]] {  // convenience interface for the expand method, which takes only one parameter and hence can be piped
+    func expand(as type: Any.Type?) throws -> (ConfigSpec) throws -> [[String: Any]] {  // convenience interface for the expand method, which takes only one parameter and hence can be piped
+        return { config in
+            if let unwrappedType = type {
+                if let unwrappedTypeAsConfig = unwrappedType as? Config.Type {
+                    // print(try unwrappedTypeAsConfig.type(of: "foo"))
+                    return try expand(config: config, as: unwrappedTypeAsConfig, isRecursiveCall: false)
+                } else {
+                    throw CastingError.isNotConfig(type: unwrappedType)
+                }
+            } else {
+                return try expand(config: config, as: nil, isRecursiveCall: false)
+            }
+        }
+    }
+
+    func expand(config: ConfigSpec) throws -> [[String: Any]] {  // convenience interface for the expand method, which takes only one parameter and hence can be piped
+        return try expand(config: config, as: nil, isRecursiveCall: false)
+    }
+
+    func expand(config: ConfigSpec, as type: Config.Type?, isRecursiveCall: Bool) throws -> [[String: Any]] {
+        let configs = try expand(configs: [config], keys: config.dict.map{ $0.key }.sorted(), as: type).map{ $0.dict }
 
         if isRecursiveCall {
             return configs
@@ -19,7 +39,7 @@ struct Expander {
         return gatherNameComponents(configs)
     }
 
-    func expand(configs: [ConfigSpec], keys: [String]) throws -> [ConfigSpec] {
+    func expand(configs: [ConfigSpec], keys: [String], as type: Config.Type?) throws -> [ConfigSpec] {
         guard let key = keys.first else {
             return configs
         }
@@ -31,17 +51,20 @@ struct Expander {
 
             if let value = updatedConfig.removeValue(forKey: key) {
 
+                // print(try? type?.type(of: key))
+
                 // expand list
 
                 if let items = value as? [Any] {
-                    try updatedConfigs.append(expansionsOf: &updatedConfig, on: items, at: key, spec: config, expander: self)
+                    try updatedConfigs.append(expansionsOf: &updatedConfig, on: items, at: key, spec: config, expander: self, as: type)
                     return
                 }
 
                 // expand object
 
                 if let nestedConfig = value as? [String: Any] {
-                    try updatedConfigs.append(expansionsOf: &updatedConfig, on: nestedConfig, at: key, spec: config, expander: self)
+                    // try updatedConfigs.append(expansionsOf: &updatedConfig, on: nestedConfig, at: key, spec: config, expander: self, as: type)
+                    try updatedConfigs.append(expansionsOf: &updatedConfig, on: nestedConfig, at: key, spec: config, expander: self, childAs: type?.type(of: key) as? Config.Type)
                     return
                 }
 
@@ -55,7 +78,7 @@ struct Expander {
 
         }
 
-        return try expand(configs: updatedConfigs, keys: Array(keys.dropFirst()))
+        return try expand(configs: updatedConfigs, keys: Array(keys.dropFirst()), as: type)
     }
 
 }

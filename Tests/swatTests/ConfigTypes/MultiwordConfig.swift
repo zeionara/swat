@@ -9,4 +9,8 @@ struct MultiwordConfig: Config {
     let barBaz: String
 
     let name: String
+
+    static func decode(key: String) throws -> String {
+        return key
+    }
 }

@@ -1,12 +1,13 @@
 import Swat
 
-struct TrivialConfig: Config {
+struct ConfigWithArrayTypedProperty: Config {
     // enum Keys: String, Decodable {
     //     case foo, bar
     // }
 
     let foo: Int
     let bar: String
+    let baz: Array<Int>
 
     let name: String
 

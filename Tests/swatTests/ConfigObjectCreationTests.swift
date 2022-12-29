@@ -3,6 +3,16 @@ import Runtime
 
 @testable import Swat
 
+struct Foo: Config {
+    let bar: [String]
+
+    let name: String
+
+    static func decode(key: String) throws -> String {
+        return key
+    }
+}
+
 final class ConfigObjectCreationTests: XCTestCase {
     var factory: ConfigFactory? = nil
 
@@ -25,6 +35,15 @@ final class ConfigObjectCreationTests: XCTestCase {
 
         // print(try typeInfo(of: T.self).property(named: "foo").type)
         // print(try T.type(of: "foo"))
+        // print(try Foo.type(of: "bar") as Any as? Array<Any>.Type)
+        // print(try Foo.type(of: "bar"))
+        // print((try typeInfo(of: Foo.self).property(named: "bar").type as? Array<String>.Type)?.Element)
+        // let arrayType = try typeInfo(of: Foo.self).property(named: "bar").type
+        // let info = try typeInfo(of: arrayType)
+        // print(info.mangledName)
+        // print(info.genericTypes.first!)
+
+        // print(try Foo.getElementTypeIfIsArray(property: "bar"))
 
         return configs
     }
@@ -80,6 +99,10 @@ final class ConfigObjectCreationTests: XCTestCase {
         XCTAssertEqual(
             configs[0].name, "custom;foo=17", "Incorrect config name"
         )
+    }
+
+    func testConfigWithArrayTypedProperty() throws {
+        let _: [ConfigWithArrayTypedProperty] = try runTest("ConfigWithArrayTypedProperty", count: 2)
     }
 
 }
