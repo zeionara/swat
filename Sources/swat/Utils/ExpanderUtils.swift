@@ -9,6 +9,7 @@ extension Expander {
     static let nameKeySeparator = ";"
     static let nameKeyValueSeparator = "="
     static let missingValueMark = "-"
+    static let valueSeparator = ","
 
     func gatherNameComponents(config: Any, result: inout [String: Any]) -> Any {
         if let config = config as? [String: Any] {
@@ -16,7 +17,11 @@ extension Expander {
 
             for (key, value) in config {
                 if key.starts(with: ConfigSpec.prefixMark) {
-                    result[key.withoutPrefixMark] = value
+                    if let existingValue = result[key.withoutPrefixMark] { // may come from another element of array
+                        result[key.withoutPrefixMark] = "\(existingValue)\(Expander.valueSeparator)\(value)"
+                    } else {
+                        result[key.withoutPrefixMark] = value
+                    }
                 } else {
                     updatedConfig[key] = gatherNameComponents(config: value, result: &result)
                 }

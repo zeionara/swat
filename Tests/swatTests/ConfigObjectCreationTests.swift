@@ -119,4 +119,8 @@ final class ConfigObjectCreationTests: XCTestCase {
         }
     }
 
+    func testArraysOfObjectsHandling() throws {
+        let _: [ConfigWithNestedArrayOfExpandableObjects] = try runTest(in: "ConfigWithNestedArrayOfExpandableObjects", count: 4)
+    }
+
 }

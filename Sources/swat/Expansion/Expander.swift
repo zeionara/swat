@@ -42,14 +42,15 @@ struct Expander {
             return configs
         }
 
+        // print(configs.count, key)
+
         var updatedConfigs = [ConfigSpec]()
 
         try configs.forEach { (config) throws -> Void in
+
             var updatedConfig = config.dict
 
             if let value = updatedConfig.removeValue(forKey: key) {
-
-                // print(try? type?.type(of: key))
 
                 // expand list
 
@@ -69,7 +70,7 @@ struct Expander {
                 // expand value of a basic type (number, string, etc)
 
                 updatedConfig[key] = value
-                updatedConfigs.append(ConfigSpec(dict: updatedConfig, yaml: config.yaml))
+                updatedConfigs.append(ConfigSpec(dict: updatedConfig, yaml: config.yaml, keyPrefix: config.keyPrefix))
             } else {
                 throw KeyError.missingValue(forKey: key) // TODO: Raise an exception
             }

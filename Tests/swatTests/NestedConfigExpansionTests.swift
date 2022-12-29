@@ -71,16 +71,17 @@ final class NestedConfigExpansionTests: ConfigExpansionTests {
                 foo:
                     bar: # as-is
                         - baz:
-                            qux:
+                            qux: # as-is
                                 - quux
                                 - quuz
                         - corge:
-                            grault:
+                            grault: # as-is
                                 - garply
                                 - waldo
                 """
             )
             |> expander.expand
+        // print(configs)
 
         XCTAssertEqual(
             configs.count, 1, "Number of configs is not equal to the expected value"

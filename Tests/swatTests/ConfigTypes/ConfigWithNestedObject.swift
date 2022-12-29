@@ -1,12 +1,12 @@
 import Swat
 
-struct Foo: ConfigWithDefaultKeys {
+struct SecondaryTrivialConfig: ConfigWithDefaultKeys {
     let foo: Int
     let bar: String
 }
 
 struct ConfigWithNestedObject: ConfigWithDefaultKeys, RootConfig {
-    let trivial: Foo
+    let trivial: SecondaryTrivialConfig
     let qux: String
 
     let name: String
