@@ -1,6 +1,7 @@
 # swat
 
 [![test](https://github.com/zeionara/swat/actions/workflows/test.yml/badge.svg)](https://github.com/zeionara/swat/actions/workflows/test.yml)
+[![language](https://skillicons.dev/icons?i=swift)](https://skillicons.dev)
 
 <p align="center">
     <img src="Assets/Images/logo.png"/>
