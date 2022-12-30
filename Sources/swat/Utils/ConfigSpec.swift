@@ -29,7 +29,7 @@ struct ConfigSpec {
     }
 
     func hasMark(key: String, mark: String) -> Bool {
-        if let comment = self.yaml.getComment(forKey: key), comment.starts(with: mark) {  // TODO: make __comment__ a static const
+        if let comment = self.yaml.getComment(forKey: key), comment.starts(with: mark) {
             return true
         }
         return false
