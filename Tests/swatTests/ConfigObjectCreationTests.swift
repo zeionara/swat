@@ -139,4 +139,10 @@ final class ConfigObjectCreationTests: XCTestCase {
         }
     }
 
+    func testHeaderAndRow() throws {
+        let config: [ConfigWithArrayTypedProperty] = try runTest(from: "forcedArrayExpansionWithCustomNamePrefix.yml", in: "ConfigWithArrayTypedProperty", count: 4)
+        XCTAssertEqual(config.first!.header, "config\tbaz\tfoo")
+        XCTAssertEqual(config.first!.row, "\t[6, 2]\t17")
+    }
+
 }

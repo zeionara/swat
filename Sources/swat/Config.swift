@@ -51,4 +51,23 @@ public extension RootConfig {
         try data.write(to: path)
     }
 
+    var header: String { asHeader() }
+
+    func asHeader(separator: String = "\t") -> String {
+        self.name.components(separatedBy: Expander.nameKeySeparator).map { key in
+            key.components(separatedBy: Expander.nameKeyValueSeparator).first!
+        }.joined(separator: separator)
+    }
+
+    var row: String { asRow() }
+
+    func asRow(separator: String = "\t") -> String {
+        self.name.components(separatedBy: Expander.nameKeySeparator).map { key in
+            let keyComponents = key.components(separatedBy: Expander.nameKeyValueSeparator)
+            if keyComponents.count < 2 {
+                return ""
+            }
+            return keyComponents.last!
+        }.joined(separator: separator)
+    }
 }
