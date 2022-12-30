@@ -106,7 +106,6 @@ final class ConfigObjectCreationTests: XCTestCase {
 
         func makeConfig() throws {
             let config: ConfigWithAttributeReference = try factory.makeOne(from: "recursive.yml", in: URL(string: "ConfigWithAttributeReference"))
-            print(config)
         }
 
         XCTAssertThrowsError (
@@ -121,6 +120,23 @@ final class ConfigObjectCreationTests: XCTestCase {
 
     func testArraysOfObjectsHandling() throws {
         let _: [ConfigWithNestedArrayOfExpandableObjects] = try runTest(in: "ConfigWithNestedArrayOfExpandableObjects", count: 4)
+    }
+
+    func test2DArraysOfObjectsHandling() throws {  // 2D array expansion is not supported
+        guard let factory = factory else { throw InitializationError.factoryIsEmpty }
+
+        func makeConfig() throws {
+            let config: ConfigWithNested2DArrayOfExpandableObjects = try factory.makeOne(in: URL(string: "ConfigWithNested2DArrayOfExpandableObjects"))
+        }
+
+        XCTAssertThrowsError (
+            try makeConfig()
+        ) { error in
+            guard case .typeMismatch = (error as? DecodingError) else {
+                XCTFail("Wrong type of error")
+                return
+            }
+        }
     }
 
 }
