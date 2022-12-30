@@ -46,4 +46,5 @@ configs.sorted{ $0.bar.foo < $1.bar.foo }.forEach{ print($0) }
 // 
 // print(String(data: content, encoding: String.Encoding.utf8))
 
-try configs.first!.write(to: Path.assets.appendingPathComponent("config.json"))
+// try configs.first!.write(to: Path.assets.appendingPathComponent("config.json"))
+try configs.first!.write(to: Path.assets.appendingPathComponent("config.yml"), as: .yaml)

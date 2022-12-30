@@ -9,4 +9,5 @@ DerivedData/
 .netrc
 
 Assets/config.json
+Assets/config.yml
 Sources/swat/Data.swift

@@ -1,5 +1,6 @@
 import Foundation
 import Runtime
+import Yams
 
 public protocol RootConfig: Config {
     var name: String { get }
@@ -28,27 +29,36 @@ public extension Config {
 
 public enum ConfigSerializationFormat {
     case json
+    case yaml
 }
 
 public enum ConfigSerializationError: Error {
     case formatIsNotSupported(format: ConfigSerializationFormat)
+    case keyEncodingStrategyIsNotSupported(format: ConfigSerializationFormat)
 }
 
 public extension RootConfig {
 
-    func write(to path: URL, as format: ConfigSerializationFormat = .json, using keyEncodingStrategy: JSONEncoder.KeyEncodingStrategy = .useDefaultKeys) throws {
-        var data: Data
+    func write(to path: URL, as format: ConfigSerializationFormat = .json, using keyEncodingStrategy: JSONEncoder.KeyEncodingStrategy? = nil, userInfo: [CodingUserInfoKey: Any] = [:]) throws {
+        // var data: Data
 
         switch format {
             case .json:
                 let encoder = JSONEncoder()
-                encoder.keyEncodingStrategy = keyEncodingStrategy
-                data = try encoder.encode(self)
+                encoder.userInfo = userInfo
+                encoder.keyEncodingStrategy = keyEncodingStrategy ?? .useDefaultKeys
+                try encoder.encode(self).write(to: path)
+            case .yaml:
+                if let _ = keyEncodingStrategy {
+                    throw ConfigSerializationError.keyEncodingStrategyIsNotSupported(format: format)
+                }
+                let encoder = YAMLEncoder()
+                try encoder.encode(self, userInfo: userInfo).write(to: path, atomically: false, encoding: .utf8)
             // default:
             //     throw ConfigSerializationError.formatIsNotSupported(format: format)
         }
 
-        try data.write(to: path)
+        // try data.write(to: path)
     }
 
     var header: String { asHeader() }
