@@ -105,7 +105,7 @@ final class ConfigObjectCreationTests: XCTestCase {
         guard let factory = factory else { throw InitializationError.factoryIsEmpty }
 
         func makeConfig() throws {
-            let config: ConfigWithAttributeReference = try factory.makeOne(from: "recursive.yml", in: URL(string: "ConfigWithAttributeReference"))
+            let _: ConfigWithAttributeReference = try factory.makeOne(from: "recursive.yml", in: URL(string: "ConfigWithAttributeReference"))
         }
 
         XCTAssertThrowsError (
@@ -126,7 +126,7 @@ final class ConfigObjectCreationTests: XCTestCase {
         guard let factory = factory else { throw InitializationError.factoryIsEmpty }
 
         func makeConfig() throws {
-            let config: ConfigWithNested2DArrayOfExpandableObjects = try factory.makeOne(in: URL(string: "ConfigWithNested2DArrayOfExpandableObjects"))
+            let _: ConfigWithNested2DArrayOfExpandableObjects = try factory.makeOne(in: URL(string: "ConfigWithNested2DArrayOfExpandableObjects"))
         }
 
         XCTAssertThrowsError (
