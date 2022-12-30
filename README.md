@@ -69,7 +69,7 @@ configs.sorted{ $0.bar.foo < $1.bar.foo }.forEach{ print($0) }
 
 The command produces the following output:
 
-```sh
+```swift
 Foo(foo: 17, bar: Examples.Bar(foo: 17, bar: "qux"), name: "demo;bar=[\"bar\": [\"qux\", \"quux\"], \"foo\": [17, 19]];bar.bar=qux;bar.foo=17")
 Foo(foo: 17, bar: Examples.Bar(foo: 17, bar: "quux"), name: "demo;bar=[\"bar\": [\"qux\", \"quux\"], \"foo\": [17, 19]];bar.bar=quux;bar.foo=17")
 Foo(foo: 17, bar: Examples.Bar(foo: 19, bar: "qux"), name: "demo;bar=[\"bar\": [\"qux\", \"quux\"], \"foo\": [17, 19]];bar.bar=qux;bar.foo=19")
@@ -80,14 +80,20 @@ Foo(foo: 17, bar: Examples.Bar(foo: 23, bar: "corge"), name: "demo;bar=[\"foo\":
 Foo(foo: 17, bar: Examples.Bar(foo: 23, bar: "grault"), name: "demo;bar=[\"foo\": [21, 23], \"bar\": [\"corge\", \"grault\"]];bar.bar=grault;bar.foo=23")
 ```
 
-Then you can run the following command to fetch the dependencies and build the app:
+Generated config can be saved to local storage:
 
 ```swift
+try configs.first!.write(to: Path.assets.appendingPathComponent("config.json"))
+```
+
+Then you can run the following command to fetch the dependencies and build the app:
+
+```sh
 swift build
 ```
 
 To update the dependencies of your project invoke the following command:
 
-```swift
+```sh
 swift package update
 ```

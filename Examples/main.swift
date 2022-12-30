@@ -1,4 +1,7 @@
 import Swat
+import Foundation
+
+// Config expansion
 
 struct Bar: ConfigWithDefaultKeys {
     let foo: Int
@@ -33,3 +36,14 @@ let configs: [Foo] = try ConfigFactory().make(
 )
 
 configs.sorted{ $0.bar.foo < $1.bar.foo }.forEach{ print($0) }
+
+// Serialization
+
+// let encoder = JSONEncoder()
+// encoder.keyEncodingStrategy = .convertToSnakeCase
+// let content = try encoder.encode(configs.first!)
+// print(type(of: content))
+// 
+// print(String(data: content, encoding: String.Encoding.utf8))
+
+try configs.first!.write(to: Path.assets.appendingPathComponent("config.json"))
