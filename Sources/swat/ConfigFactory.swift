@@ -20,7 +20,6 @@ struct ConfigFactory {
     func make<T>(from fileName: String, in directory: URL? = nil) throws -> [T] where T: Decodable {
 
         let configs = try reader.read(from: fileName, in: root.appendingPathComponentIfNotNull(directory)) |> expander.expand(as: T.self)
-        //print(configs)
         let decoder = JSONDecoder()
 
         decoder.keyDecodingStrategy = .custom { keys in

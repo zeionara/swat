@@ -40,21 +40,3 @@ func cartesianProduct<T>(_ itemCollections: [[T]]) -> [[T]] {
         }
     }
 }
-
-// func cartesianProduct<T>(_ itemCollections: [T]...) -> [[T]] {
-//     guard let firstItemCollection = itemCollections.first else {
-//         return []
-//     }
-// 
-//     return itemCollections.reversed()
-//         .reduce([firstItemCollection], {itemGroups, items in 
-//             print("handling items", items)
-//             let result = items.flatMap{ item in
-//                 pel(item, itemGroups)
-//             }
-//             print("stop handling items", items)
-//             return result
-//         }).map{ itemGroup in
-//             itemGroup.dropLast(firstItemCollection.count)
-//         }
-// }

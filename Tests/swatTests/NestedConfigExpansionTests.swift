@@ -81,7 +81,6 @@ final class NestedConfigExpansionTests: ConfigExpansionTests {
                 """
             )
             |> expander.expand
-        // print(configs)
 
         XCTAssertEqual(
             configs.count, 1, "Number of configs is not equal to the expected value"
