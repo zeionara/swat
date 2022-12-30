@@ -1,6 +1,6 @@
 import Foundation
 
-struct ConfigFactory {
+public struct ConfigFactory {
     public static let defaultFileName = "default.yml"
 
     enum ConfigMakingError: Error {
@@ -11,15 +11,27 @@ struct ConfigFactory {
     let reader: ConfigSpecReader
     let expander: Expander
 
-    init(at root: URL = Path.assets) {
+    public init(at root: URL = Path.assets) {
         self.root = root
         reader = ConfigSpecReader(at: root)
         expander = Expander()
     }
 
-    func make<T>(from fileName: String, in directory: URL? = nil) throws -> [T] where T: Decodable {
+    public func make<T>(from fileName: String, in directory: URL? = nil) throws -> [T] where T: Decodable {
+        return try make(
+            configs: try reader.read(from: fileName, in: root.appendingPathComponentIfNotNull(directory))
+            |> expander.expand(as: T.self)
+        )
+    }
 
-        let configs = try reader.read(from: fileName, in: root.appendingPathComponentIfNotNull(directory)) |> expander.expand(as: T.self)
+    public func make<T>(_ content: String, in directory: URL? = nil) throws -> [T] where T: Decodable {
+        return try make(
+            configs: try reader.read(content, in: root.appendingPathComponentIfNotNull(directory))
+            |> expander.expand(as: T.self)
+        )
+    }
+
+    private func make<T>(configs: [[String: Any]]) throws -> [T] where T: Decodable {
         let decoder = JSONDecoder()
 
         decoder.keyDecodingStrategy = .custom { keys in
@@ -35,11 +47,11 @@ struct ConfigFactory {
         }
     }
 
-    func make<T>(in directory: URL? = nil) throws -> [T] where T: Decodable {
+    public func make<T>(in directory: URL? = nil) throws -> [T] where T: Decodable {
         return try make(from: ConfigFactory.defaultFileName, in: directory)
     }
 
-    func makeOne<T>(from fileName: String, in directory: URL? = nil) throws -> T where T: Decodable {
+    public func makeOne<T>(from fileName: String, in directory: URL? = nil) throws -> T where T: Decodable {
         let results: [T] = try make(from: fileName, in: directory)
 
         guard results.count == 1 else {
@@ -49,7 +61,7 @@ struct ConfigFactory {
         return results.first!
     }
 
-    func makeOne<T>(in directory: URL? = nil) throws -> T where T: Decodable {
+    public func makeOne<T>(in directory: URL? = nil) throws -> T where T: Decodable {
         let results: [T] = try make(in: directory)
 
         guard results.count == 1 else {

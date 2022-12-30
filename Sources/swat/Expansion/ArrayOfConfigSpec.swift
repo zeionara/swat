@@ -7,13 +7,13 @@ extension Array where Element == ConfigSpec {
 
         if spec.hasAsIsMark(key: key) {
             root[key] = config
-            self.append(ConfigSpec(dict: root, yaml: spec.yaml))
+            self.append(ConfigSpec(dict: root, yaml: spec.yaml, keyPrefix: spec.keyPrefix))
             return
         }
 
         for expandedNestedConfig in try expander.expand(config: ConfigSpec(dict: config, yaml: spec.yaml[.string(key)], keyPrefix: spec.keyPrefix.appending(key)), as: type, isRecursiveCall: true) {
             root[key] = expandedNestedConfig
-            self.append(ConfigSpec(dict: root, yaml: spec.yaml))
+            self.append(ConfigSpec(dict: root, yaml: spec.yaml, keyPrefix: spec.keyPrefix))
         }
 
     }
@@ -37,7 +37,7 @@ extension Array where Element == ConfigSpec {
 
                 for items in cartesianProduct(configVariants) {
                     root[key] = items
-                    self.append(ConfigSpec(dict: root, yaml: spec.yaml))
+                    self.append(ConfigSpec(dict: root, yaml: spec.yaml, keyPrefix: spec.keyPrefix))
                 }
             } else {
                 throw YamlStructureError.mustBeArray
@@ -53,18 +53,6 @@ extension Array where Element == ConfigSpec {
             return
         }
 
-        // if let _ = try configType?.getElementTypeIfIsArray(property: key.fromKebabCase) {
-        //     // print(typeInfo(of: type(of: items)))
-
-        //     // print(type)
-        //     print(type(of: items))
-        //     if let foo = try configType?.type(of: try configType!.decode(key: key)) {
-        //         print(items as? foo.Type)
-        //     }
-        //     // print(propertyTypeInfo)
-        //     // print(type(of: items))
-        // }
-
         try items.forEach{ (item) -> Void in
             root[spec.addPrefix(toKey: key)] = item
 
@@ -72,7 +60,7 @@ extension Array where Element == ConfigSpec {
                 try self.append(expansionsOf: &root, on: nestedConfig, at: key, spec: spec, expander: expander, childAs: configType?.type(of: key) as? Config.Type)
             } else {
                 root[key] = item
-                self.append(ConfigSpec(dict: root, yaml: spec.yaml))
+                self.append(ConfigSpec(dict: root, yaml: spec.yaml, keyPrefix: spec.keyPrefix))
             }
         }
     }

@@ -27,12 +27,57 @@ And in the list of dependencies for your `target` like this:
 dependencies: ["Swat"]
 ```
 
-Then, in your code you need to import the package and use it as you want:
+Then, in your code you need to import the package and use it as you want (see file `Examples/main.swift`):
 
 ```swift
 import Swat
 
-try! read(from: "singleFile.yml", in: Path.testAssets)
+struct Bar: ConfigWithDefaultKeys {
+    let foo: Int
+    let bar: String
+}
+
+struct Foo: ConfigWithDefaultKeys, RootConfig {
+    let foo: Int
+    let bar: Bar
+
+    let name: String
+}
+
+let configs: [Foo] = try ConfigFactory().make(
+    """
+    foo: 17
+    bar:
+        - foo:
+            - 17
+            - 19
+          bar:
+            - qux
+            - quux
+        - foo:
+            - 21
+            - 23
+          bar:
+            - corge
+            - grault
+    name: demo
+    """
+)
+
+configs.sorted{ $0.bar.foo < $1.bar.foo }.forEach{ print($0) }
+```
+
+The command produces the following output:
+
+```sh
+Foo(foo: 17, bar: Examples.Bar(foo: 17, bar: "qux"), name: "demo;bar=[\"bar\": [\"qux\", \"quux\"], \"foo\": [17, 19]];bar.bar=qux;bar.foo=17")
+Foo(foo: 17, bar: Examples.Bar(foo: 17, bar: "quux"), name: "demo;bar=[\"bar\": [\"qux\", \"quux\"], \"foo\": [17, 19]];bar.bar=quux;bar.foo=17")
+Foo(foo: 17, bar: Examples.Bar(foo: 19, bar: "qux"), name: "demo;bar=[\"bar\": [\"qux\", \"quux\"], \"foo\": [17, 19]];bar.bar=qux;bar.foo=19")
+Foo(foo: 17, bar: Examples.Bar(foo: 19, bar: "quux"), name: "demo;bar=[\"bar\": [\"qux\", \"quux\"], \"foo\": [17, 19]];bar.bar=quux;bar.foo=19")
+Foo(foo: 17, bar: Examples.Bar(foo: 21, bar: "corge"), name: "demo;bar=[\"foo\": [21, 23], \"bar\": [\"corge\", \"grault\"]];bar.bar=corge;bar.foo=21")
+Foo(foo: 17, bar: Examples.Bar(foo: 21, bar: "grault"), name: "demo;bar=[\"foo\": [21, 23], \"bar\": [\"corge\", \"grault\"]];bar.bar=grault;bar.foo=21")
+Foo(foo: 17, bar: Examples.Bar(foo: 23, bar: "corge"), name: "demo;bar=[\"foo\": [21, 23], \"bar\": [\"corge\", \"grault\"]];bar.bar=corge;bar.foo=23")
+Foo(foo: 17, bar: Examples.Bar(foo: 23, bar: "grault"), name: "demo;bar=[\"foo\": [21, 23], \"bar\": [\"corge\", \"grault\"]];bar.bar=grault;bar.foo=23")
 ```
 
 Then you can run the following command to fetch the dependencies and build the app:

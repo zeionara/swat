@@ -1,8 +1,8 @@
 import Foundation
 
-struct Path {
+public struct Path {
     static let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-    static let assets = Path.root.appendingPathComponent("Assets")
+    static public let assets = Path.root.appendingPathComponent("Assets")
     static let testAssets = Path.assets.appendingPathComponent("Test")
 
     static private let yamlRegex = try! NSRegularExpression(pattern: ".+\\.ya?ml$")

@@ -11,6 +11,10 @@ let package = Package(
             name: "Swat",
             targets: ["Swat"]
         ),
+        .executable(
+            name: "Examples",
+            targets: ["Examples"]
+        )
     ],
     dependencies: [
         .package(url: "https://github.com/jpsim/Yams.git", from: "5.0.1"),
@@ -29,10 +33,17 @@ let package = Package(
             ],
             path: "Sources/swat"
         ),
+        .target(
+            name: "Examples",
+            dependencies: [
+                "Swat"
+            ],
+            path: "Examples"
+        ),
         .testTarget(
             name: "SwatTests",
             dependencies: ["Swat"],
             path: "Tests/swatTests"
-        ),
+        )
     ]
 )
