@@ -55,10 +55,10 @@ public extension RootConfig {
                 }
                 let encoder = YAMLEncoder()
 
-                print(try Yams.dump(object: [1.0, 2.0]))
-                print("encoding")
-                print(try encoder.encode([1.0, 2.0]))
-                print(try encoder.encode(self, userInfo: userInfo))
+                // print(try Yams.dump(object: [1.0, 2.0]))
+                // print("encoding")
+                // print(try encoder.encode([1.0, 2.0]))
+                // print(try encoder.encode(self, userInfo: userInfo))
 
                 try encoder.encode(self, userInfo: userInfo).write(to: path, atomically: false, encoding: .utf8)
             // default:
