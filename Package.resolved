@@ -21,10 +21,10 @@
     {
       "identity" : "yams",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/jpsim/Yams.git",
+      "location" : "https://github.com/zeionara/Yams.git",
       "state" : {
-        "revision" : "01835dc202670b5bb90d07f3eae41867e9ed29f6",
-        "version" : "5.0.1"
+        "branch" : "main",
+        "revision" : "c73e2499d6b7d0b23cf89a977defa645e3b29638"
       }
     }
   ],

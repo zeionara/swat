@@ -17,7 +17,8 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/jpsim/Yams.git", from: "5.0.1"),
+        // .package(url: "https://github.com/jpsim/Yams.git", from: "5.0.1"),
+        .package(url: "https://github.com/zeionara/Yams.git", branch: "main"),
         .package(url: "https://github.com/zeionara/YamlSwift.git", branch: "master"),
         .package(url: "https://github.com/wickwirew/Runtime.git", branch: "master")
     ],
@@ -33,7 +34,7 @@ let package = Package(
             ],
             path: "Sources/swat"
         ),
-        .target(
+        .executableTarget(
             name: "Examples",
             dependencies: [
                 "Swat"

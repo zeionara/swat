@@ -49,6 +49,7 @@ public extension RootConfig {
                 encoder.keyEncodingStrategy = keyEncodingStrategy ?? .useDefaultKeys
                 try encoder.encode(self).write(to: path)
             case .yaml:
+                Emitter.Options.doubleFormatStyle = .decimal
                 if let _ = keyEncodingStrategy {
                     throw ConfigSerializationError.keyEncodingStrategyIsNotSupported(format: format)
                 }
