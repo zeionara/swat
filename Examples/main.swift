@@ -6,6 +6,7 @@ import Foundation
 struct Bar: ConfigWithDefaultKeys {
     let foo: Int
     let bar: String
+    let baz: Double
 }
 
 struct Foo: ConfigWithDefaultKeys, RootConfig {
@@ -25,12 +26,14 @@ let configs: [Foo] = try ConfigFactory().make(
           bar:
             - qux
             - quux
+          baz: 1.0
         - foo:
             - 21
             - 23
           bar:
             - corge
             - grault
+          baz: 2.0
     name: demo
     """
 )
